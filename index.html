@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A focused trainer for understanding Italian-accented business English in sourcing and supply-chain meetings."
+    />
+    <title>意大利商务英语听力训练器</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Procurement Listening Lab</p>
+        <h1>意大利商务英语听力训练器</h1>
+      </div>
+      <button id="loadSampleBtn" class="ghost-btn" type="button">载入通用样例</button>
+    </header>
+
+    <main class="layout">
+      <section class="panel input-panel" aria-labelledby="input-title">
+        <div class="section-head">
+          <div>
+            <h2 id="input-title">会议材料</h2>
+            <p>粘贴语音转写或会议片段，先清洗敏感词，再生成训练内容。</p>
+          </div>
+          <button id="analyzeBtn" class="primary-btn" type="button">生成训练</button>
+        </div>
+
+        <label class="field">
+          <span>转写文本</span>
+          <textarea
+            id="transcriptInput"
+            rows="14"
+            placeholder="把会议转写粘贴到这里。建议每次 1-3 分钟，包含数字、供应商、交期、成本或采购策略。"
+          ></textarea>
+        </label>
+
+        <div class="grid two">
+          <label class="field">
+            <span>敏感词清单</span>
+            <textarea
+              id="sensitiveInput"
+              rows="6"
+              placeholder="每行一个真实供应商、客户、工厂、项目或人名。App 会替换为通用占位词。"
+            ></textarea>
+          </label>
+
+          <label class="field">
+            <span>会议背景</span>
+            <textarea
+              id="contextInput"
+              rows="6"
+              placeholder="可选：例如欧洲采购、供应链评审、模具变更、双供应源、海运风险等。"
+            ></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="summary-band" aria-label="训练总览">
+        <div class="metric">
+          <span id="wordCount">0</span>
+          <p>词数</p>
+        </div>
+        <div class="metric">
+          <span id="keywordCount">0</span>
+          <p>关键词</p>
+        </div>
+        <div class="metric">
+          <span id="numberCount">0</span>
+          <p>数字信号</p>
+        </div>
+        <div class="metric">
+          <span id="phraseCount">0</span>
+          <p>口头禅</p>
+        </div>
+      </section>
+
+      <section class="results-grid">
+        <article class="panel">
+          <h2>清洗后文本</h2>
+          <div id="cleanedOutput" class="output empty">等待生成。</div>
+          <button id="copyCleanedBtn" class="ghost-btn block" type="button">复制清洗文本</button>
+        </article>
+
+        <article class="panel">
+          <h2>业务主线</h2>
+          <ol id="storylineOutput" class="list"></ol>
+        </article>
+
+        <article class="panel">
+          <h2>关键词雷达</h2>
+          <div id="keywordOutput" class="chips"></div>
+        </article>
+
+        <article class="panel">
+          <h2>数字与时间</h2>
+          <div id="numbersOutput" class="chips"></div>
+        </article>
+
+        <article class="panel">
+          <h2>意大利式表达</h2>
+          <div id="phraseOutput" class="phrase-list"></div>
+        </article>
+
+        <article class="panel">
+          <h2>会议确认句</h2>
+          <div id="questionsOutput" class="phrase-list"></div>
+        </article>
+      </section>
+
+      <section class="panel practice-panel">
+        <div class="section-head">
+          <div>
+            <h2>三遍听力训练</h2>
+            <p>不要逐词翻译。按结论、数字、原因三层听，训练会议主干捕捉。</p>
+          </div>
+          <button id="exportBtn" class="primary-btn" type="button">导出训练笔记</button>
+        </div>
+        <div class="practice-grid">
+          <div>
+            <h3>第一遍：结论</h3>
+            <p id="passOne">识别对方想推动的决定或动作。</p>
+          </div>
+          <div>
+            <h3>第二遍：对象和数字</h3>
+            <p id="passTwo">抓供应商、国家、数量、比例、日期和费用。</p>
+          </div>
+          <div>
+            <h3>第三遍：原因</h3>
+            <p id="passThree">判断原因是成本、风险、交期、产能、库存还是模具。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
