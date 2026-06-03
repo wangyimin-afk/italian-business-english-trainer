@@ -171,6 +171,70 @@ textarea:focus {
   margin-top: 16px;
 }
 
+.input-panel {
+  margin-top: 18px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 0 12px;
+}
+
+.tab-btn.active {
+  border-color: var(--accent);
+  background: #e7f4f2;
+  color: var(--accent-dark);
+}
+
+.sentence-library {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-height: 680px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.sentence-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 14px;
+}
+
+.sentence-card strong {
+  display: block;
+  color: var(--accent-dark);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.sentence-card .en {
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.sentence-card .zh {
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 0;
+}
+
 .summary-band {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -319,7 +383,8 @@ textarea:focus {
   .two,
   .results-grid,
   .practice-grid,
-  .summary-band {
+  .summary-band,
+  .sentence-library {
     grid-template-columns: 1fr;
   }
 
