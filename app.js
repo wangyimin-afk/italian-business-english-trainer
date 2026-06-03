@@ -2,7 +2,6 @@ const transcriptInput = document.querySelector("#transcriptInput");
 const sensitiveInput = document.querySelector("#sensitiveInput");
 const contextInput = document.querySelector("#contextInput");
 const analyzeBtn = document.querySelector("#analyzeBtn");
-const loadSampleBtn = document.querySelector("#loadSampleBtn");
 const copyCleanedBtn = document.querySelector("#copyCleanedBtn");
 const exportBtn = document.querySelector("#exportBtn");
 const toast = document.querySelector("#toast");
@@ -13,29 +12,28 @@ const state = {
 };
 
 const domainTerms = [
-  ["tooling", "模具/工装"],
-  ["tool update", "模具修改"],
-  ["interim solution", "临时方案"],
-  ["global action", "全球统一动作"],
-  ["part number", "料号"],
-  ["dual source", "双供应源"],
-  ["two sources", "两个供应来源"],
-  ["local source", "本地供应源"],
-  ["china source", "中国供应源"],
-  ["european source", "欧洲供应源"],
-  ["volume", "采购量/预测量"],
-  ["forecast", "预测"],
+  ["decision", "决定/结论"],
+  ["action", "行动项"],
+  ["owner", "负责人"],
+  ["deadline", "截止时间"],
+  ["timeline", "时间线"],
+  ["priority", "优先级"],
+  ["budget", "预算"],
+  ["price", "价格"],
   ["cost", "成本"],
-  ["average price", "平均价格"],
-  ["sea freight", "海运"],
-  ["lead time", "交期"],
-  ["flexibility", "灵活性"],
+  ["client", "客户/合作方"],
+  ["partner", "合作方"],
+  ["project", "项目"],
+  ["quality", "质量"],
+  ["delivery", "交付"],
+  ["delay", "延迟"],
   ["risk", "风险"],
-  ["stock", "库存"],
-  ["components", "零部件"],
-  ["package", "套件/包装"],
-  ["elevator", "升降/电梯相关套件"],
-  ["range of products", "产品范围"],
+  ["issue", "问题"],
+  ["solution", "解决方案"],
+  ["proposal", "提案"],
+  ["agreement", "一致意见"],
+  ["follow up", "跟进"],
+  ["next step", "下一步"],
 ];
 
 const fillerPhrases = [
@@ -52,38 +50,30 @@ const fillerPhrases = [
 
 const storylineRules = [
   {
-    keys: ["global action", "europe", "china"],
-    text: "对方可能在强调：某个变更不应只作用于单一区域，而应作为全球统一动作同步到欧洲和中国。",
+    keys: ["decision"],
+    text: "先抓对方的结论：这段话可能在说明一个决定、建议或需要确认的方向。",
   },
   {
-    keys: ["tool", "update"],
-    text: "存在模具或工装更新时间点，需要确认完成日期、影响料号和切换库存。",
+    keys: ["action"],
+    text: "识别行动项：记录谁负责、要做什么、什么时候完成。",
   },
   {
-    keys: ["two sources", "dual source", "same part number"],
-    text: "会议核心可能涉及双供应源策略：同一料号保留两个来源，以平衡成本、风险和供应连续性。",
+    keys: ["deadline"],
+    text: "时间点是复听重点：确认截止日期、阶段节点和是否存在延期风险。",
   },
   {
-    keys: ["sea freight", "flexibility"],
-    text: "对方在比较中国海运成本优势和本地供应灵活性，需求高峰时本地库存更容易救急。",
+    keys: ["cost"],
+    text: "成本或价格是关键信号：需要区分事实数字、估算数字和谈判判断。",
   },
   {
-    keys: ["cost", "higher", "china"],
-    text: "成本差异是谈判重点。需要确认欧洲来源相对中国来源高出的比例，以及是否能用风险降低来解释。",
+    keys: ["risk"],
+    text: "风险类表达通常跟在原因解释后面：重点听延迟、质量、预算、责任或交付风险。",
   },
   {
-    keys: ["volume", "pieces"],
-    text: "数量信号需要单独确认：当前需求、年度预测、份额估算和订单包数量可能混在一起说。",
+    keys: ["issue"],
+    text: "如果对方在描述问题，先拆成现象、原因、影响和下一步。",
   },
 ];
-
-const sampleTranscript = `To me this change should be a global action, not only for Europe. If the box is modified for Europe, it should be modified as well for China.
-
-The importer in Central Europe may discuss buying from Supplier A because the current package is expensive. The possible volume is around 8,000 pieces, but we need to confirm if this is annual volume or current forecast.
-
-For Europe this was considered an interim solution. We are still waiting for the tooling update, and the supplier needs a few weeks to modify the tool.
-
-The idea was to have two sources for the same part number. One source can be local and one source can come from China. The European source may be 15 to 20 percent higher, but it gives flexibility, risk management, and faster reaction when sea freight is delayed or when there is a volume peak.`;
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -105,8 +95,7 @@ function getSensitiveTerms() {
 function redactText(text) {
   let cleaned = text;
   getSensitiveTerms().forEach((term, index) => {
-    const label = index % 3 === 0 ? "Supplier" : index % 3 === 1 ? "Customer" : "Project";
-    const replacement = `[${label} ${Math.floor(index / 3) + 1}]`;
+    const replacement = `[Entity ${index + 1}]`;
     cleaned = cleaned.replace(new RegExp(escapeRegExp(term), "gi"), replacement);
   });
   return cleaned;
@@ -120,21 +109,21 @@ function findTerms(text, dictionary) {
 }
 
 function findNumbers(text) {
-  const matches = text.match(/\b\d{1,3}(?:,\d{3})*(?:\.\d+)?\b|\b\d+(?:\.\d+)?\s?(?:%|percent|weeks?|months?|days?|pieces?|pcs|packages?)\b/gi);
+  const matches = text.match(/\b\d{1,3}(?:,\d{3})*(?:\.\d+)?\b|\b\d+(?:\.\d+)?\s?(?:%|percent|weeks?|months?|days?)\b/gi);
   return [...new Set(matches || [])];
 }
 
 function buildStoryline(text) {
   const lower = text.toLowerCase();
   const hits = storylineRules
-    .filter((rule) => rule.keys.every((key) => lower.includes(key)))
+    .filter((rule) => rule.keys.some((key) => lower.includes(key)))
     .map((rule) => rule.text);
 
   if (hits.length) return hits;
 
   return [
-    "先判断这段话是在讨论变更、成本、供应源、交期还是风险。",
-    "把供应商、国家、数量、时间和动作拆开记录，不需要逐词翻译。",
+    "先判断这段话是在讨论决定、问题、原因、责任、时间还是下一步。",
+    "把人物、数字、时间和动作拆开记录，不需要逐词翻译。",
     "用确认句把不确定点钉住，尤其是数字、日期和责任方。",
   ];
 }
@@ -142,22 +131,22 @@ function buildStoryline(text) {
 function buildQuestions(text) {
   const lower = text.toLowerCase();
   const questions = [
-    "Just to confirm, what is the action owner for this change?",
-    "When you mention this number, is it annual volume or current forecast?",
-    "Can I understand this as a sourcing and risk-management decision?",
+    "Just to confirm, what is the main decision here?",
+    "Who is the owner for the next action?",
+    "When you mention this number, what exactly does it refer to?",
   ];
 
-  if (lower.includes("global") || lower.includes("europe") || lower.includes("china")) {
-    questions.unshift("Just to confirm, should this change apply globally, not only to one region?");
+  if (lower.includes("deadline") || lower.includes("timeline") || lower.includes("date")) {
+    questions.unshift("Could you confirm the exact timeline and deadline?");
   }
-  if (lower.includes("tool")) {
-    questions.unshift("Do you mean the supplier is still waiting for the tooling update?");
+  if (lower.includes("cost") || lower.includes("price") || lower.includes("budget")) {
+    questions.unshift("Do you mean this is a confirmed cost or only an estimate?");
   }
-  if (lower.includes("source")) {
-    questions.unshift("Can I understand this as a dual-source strategy for the same part number?");
+  if (lower.includes("risk") || lower.includes("issue") || lower.includes("delay")) {
+    questions.unshift("So the main concern is risk and impact, correct?");
   }
-  if (lower.includes("sea freight")) {
-    questions.unshift("So the main reason for the local source is flexibility when sea freight is delayed, correct?");
+  if (lower.includes("proposal") || lower.includes("solution")) {
+    questions.unshift("Can I understand this as the proposed solution?");
   }
 
   return [...new Set(questions)].slice(0, 7);
@@ -261,7 +250,7 @@ function analyze() {
   document.querySelector("#passOne").textContent = storyline[0] || "先抓结论。";
   document.querySelector("#passTwo").textContent = numbers.length
     ? `重点复听这些数字：${numbers.slice(0, 6).join("、")}。`
-    : "这一段数字不明显，复听时优先抓供应商、国家和责任方。";
+    : "这一段数字不明显，复听时优先抓人物、时间和责任方。";
   document.querySelector("#passThree").textContent =
     "复听所有 because、actually、the idea was 后面的内容，通常那里藏着原因或策略。";
 
@@ -290,13 +279,6 @@ function exportNotes() {
   anchor.click();
   URL.revokeObjectURL(url);
 }
-
-loadSampleBtn.addEventListener("click", () => {
-  transcriptInput.value = sampleTranscript;
-  sensitiveInput.value = "";
-  contextInput.value = "欧洲采购会议；供应链风险；模具变更；双供应源策略。";
-  analyze();
-});
 
 analyzeBtn.addEventListener("click", analyze);
 copyCleanedBtn.addEventListener("click", () => copyText(state.cleanedText, "先生成清洗文本。"));
