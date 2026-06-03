@@ -471,10 +471,10 @@ function exportNotes() {
   URL.revokeObjectURL(url);
 }
 
-analyzeBtn.addEventListener("click", analyze);
-copyCleanedBtn.addEventListener("click", () => copyText(state.cleanedText, "先生成清洗文本。"));
-exportBtn.addEventListener("click", exportNotes);
-copyLibraryBtn.addEventListener("click", () => copyText(formatLibraryText(), "句库还没有加载。"));
+analyzeBtn?.addEventListener("click", analyze);
+copyCleanedBtn?.addEventListener("click", () => copyText(state.cleanedText, "先生成清洗文本。"));
+exportBtn?.addEventListener("click", exportNotes);
+copyLibraryBtn?.addEventListener("click", () => copyText(formatLibraryText(), "句库还没有加载。"));
 
 renderCategoryTabs();
 renderSentenceLibrary();
