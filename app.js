@@ -248,31 +248,37 @@ const accentProfiles = [
     title: "意大利人英语",
     points: ["常用 to me / actually / more or less 开头。", "句子可能很长，中间插入背景和个人判断。", "重点通常在 the idea is / because why 后面。"],
     sample: "To me, the idea is to keep flexibility, because why, the situation can change very fast.",
+    zh: "我认为，核心思路是保持灵活性。为什么呢？因为情况可能变化得很快。",
   },
   {
     title: "印度裔英语",
     points: ["语速可能快，重音和英美英语不同。", "常用 please do the needful / kindly confirm / revert 这类商务表达。", "数字和时间要主动复述确认。"],
     sample: "Kindly confirm the revised timeline, and we will revert with the updated commercial proposal.",
+    zh: "请确认修改后的时间线，我们会带着更新后的商务方案回复。",
   },
   {
     title: "马来西亚/东南亚英语",
     points: ["表达可能更短、更直接，语法会比较实用化。", "常用 can / cannot / already / later 来表达状态。", "听的时候重点抓动作、时间和是否可行。"],
     sample: "Can proceed first, but later we need your confirmation on price and delivery.",
+    zh: "可以先推进，但后面我们需要你确认价格和交期。",
   },
   {
     title: "韩国人英语",
     points: ["比较重视礼貌、层级和确认。", "可能间接表达不同意，例如 we need to review internally。", "会议后邮件确认很重要。"],
     sample: "We need to check internally first, and then we can give you the final confirmation.",
+    zh: "我们需要先内部确认，然后才能给你最终确认。",
   },
   {
     title: "德国人英语",
     points: ["结构清楚，偏事实、流程、责任和规则。", "表达可能直接，但通常不是个人情绪。", "适合用数据、日期、责任人来沟通。"],
     sample: "The requirement is clear, but we need a fixed deadline and one responsible owner.",
+    zh: "要求是清楚的，但我们需要一个固定截止日期和一个明确负责人。",
   },
   {
     title: "芬兰人英语",
     points: ["通常简洁、克制，不会过度寒暄。", "沉默不一定是否定，可能是在思考。", "书面确认和事实依据很重要。"],
     sample: "Let us check the facts first. After that, we can decide the next step.",
+    zh: "我们先核对事实。之后再决定下一步。",
   },
 ];
 
@@ -324,7 +330,12 @@ function renderSentenceLibrary() {
     chinese.className = "zh";
     chinese.textContent = item.zh;
 
-    card.append(category, english, chinese);
+    const hint = document.createElement("span");
+    hint.className = "speak-hint";
+    hint.textContent = "点击朗读英文";
+
+    card.addEventListener("click", () => speak(item.en, "en-US"));
+    card.append(category, english, chinese, hint);
     sentenceLibrary.appendChild(card);
   });
 }
@@ -411,14 +422,10 @@ function renderAccentProfiles() {
       <div class="sample-line">
         <strong>Sample</strong>
         <p>${profile.sample}</p>
+        <p class="sample-zh">${profile.zh}</p>
       </div>
     `;
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "ghost-btn";
-    button.textContent = "朗读示例";
-    button.addEventListener("click", () => speak(profile.sample, "en-US"));
-    card.querySelector(".sample-line").appendChild(button);
+    card.querySelector(".sample-line").addEventListener("click", () => speak(profile.sample, "en-US"));
     accentGrid.appendChild(card);
   });
 }
