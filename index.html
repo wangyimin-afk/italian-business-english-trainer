@@ -5,34 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="A focused trainer for understanding Italian-accented business English in professional meetings."
+      content="A practical language library for overseas trade: business English, multilingual vocabulary, pronunciation charts, and accent patterns."
     />
-    <title>意大利商务英语听力训练器</title>
-    <link rel="stylesheet" href="styles.css?v=b7" />
+    <title>海外贸易工作语言库</title>
+    <link rel="stylesheet" href="styles.css?v=c1" />
   </head>
   <body>
     <header class="topbar">
       <div>
-        <p class="eyebrow">Italian Business English Lab</p>
-        <h1>意大利商务英语听力训练器</h1>
+        <p class="eyebrow">Overseas Trade Language Library</p>
+        <h1>海外贸易工作语言库</h1>
       </div>
     </header>
 
     <main class="layout">
-      <section class="panel library-panel" aria-labelledby="library-title">
+      <nav class="module-nav" aria-label="学习模块">
+        <a href="#phrase-section">商务句库</a>
+        <a href="#vocab-section">多语言词表</a>
+        <a href="#pronunciation-section">发音矩阵</a>
+        <a href="#accent-section">各国英语风格</a>
+      </nav>
+
+      <section id="phrase-section" class="panel library-panel" aria-labelledby="library-title">
         <div class="section-head">
           <div>
-            <h2 id="library-title">背诵句库</h2>
-            <p>按意大利商务英语常见表达方式整理。先读英文，再看中文意思，重点熟悉他们的句子节奏和逻辑。</p>
+            <h2 id="library-title">商务句库</h2>
+            <p>先保留意大利式商务英语句库，后续可以继续扩展印度、东南亚、韩国、德国等客户表达。</p>
           </div>
           <button id="copyLibraryBtn" class="primary-btn" type="button">复制全部句库</button>
         </div>
         <div id="categoryTabs" class="tabs" aria-label="句库分类"></div>
         <div id="sentenceLibrary" class="sentence-library"></div>
       </section>
+
+      <section id="vocab-section" class="panel vocab-panel" aria-labelledby="vocab-title">
+        <div class="section-head">
+          <div>
+            <h2 id="vocab-title">多语言工作词表</h2>
+            <p>围绕海外贸易高频场景整理。点击任意语言单元可以朗读，先让耳朵熟悉不同语言的声音。</p>
+          </div>
+          <button id="copyVocabBtn" class="primary-btn" type="button">复制词表</button>
+        </div>
+        <div id="vocabGrid" class="vocab-grid"></div>
+      </section>
+
+      <section id="pronunciation-section" class="panel pronunciation-panel" aria-labelledby="pronunciation-title">
+        <div class="section-head">
+          <div>
+            <h2 id="pronunciation-title">基础发音矩阵</h2>
+            <p>日语五十音、韩语基础音节、意大利语、芬兰语、德语的入门发音入口。点击格子朗读。</p>
+          </div>
+        </div>
+        <div id="scriptTabs" class="tabs" aria-label="发音分类"></div>
+        <div id="scriptGrid" class="script-grid"></div>
+      </section>
+
+      <section id="accent-section" class="panel accent-panel" aria-labelledby="accent-title">
+        <div class="section-head">
+          <div>
+            <h2 id="accent-title">各国人说英语的方式</h2>
+            <p>同样是英语，不同国家客户的句子节奏、确认方式和商务重点不同。这里先做工作识别，不做刻板判断。</p>
+          </div>
+        </div>
+        <div id="accentGrid" class="accent-grid"></div>
+      </section>
     </main>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=b7"></script>
+    <script src="app.js?v=c1"></script>
   </body>
 </html>

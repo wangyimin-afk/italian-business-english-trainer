@@ -85,6 +85,32 @@ p {
   margin: 24px auto 56px;
 }
 
+.module-nav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px;
+  background: rgba(238, 243, 247, 0.94);
+  backdrop-filter: blur(8px);
+}
+
+.module-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 850;
+  padding: 0 13px;
+  text-decoration: none;
+}
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -233,6 +259,121 @@ textarea:focus {
   color: var(--muted);
   line-height: 1.65;
   margin-bottom: 0;
+}
+
+.vocab-panel,
+.pronunciation-panel,
+.accent-panel {
+  margin-top: 18px;
+}
+
+.vocab-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.vocab-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 14px;
+}
+
+.vocab-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.vocab-head strong {
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.vocab-head span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.language-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.speak-cell,
+.script-cell {
+  min-height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 9px;
+  text-align: left;
+}
+
+.speak-cell:hover,
+.script-cell:hover {
+  border-color: var(--accent);
+}
+
+.speak-cell span,
+.script-cell span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.speak-cell strong,
+.script-cell strong {
+  display: block;
+  line-height: 1.35;
+}
+
+.script-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.accent-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.accent-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 16px;
+}
+
+.accent-card h3 {
+  font-size: 18px;
+}
+
+.accent-card ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink);
+  line-height: 1.75;
+}
+
+.sample-line {
+  margin-top: 12px;
+  border-left: 4px solid var(--accent);
+  background: #edf7f5;
+  border-radius: 8px;
+  padding: 11px;
+}
+
+.sample-line button {
+  margin-top: 8px;
 }
 
 .summary-band {
@@ -384,8 +525,14 @@ textarea:focus {
   .results-grid,
   .practice-grid,
   .summary-band,
-  .sentence-library {
+  .sentence-library,
+  .language-row,
+  .accent-grid {
     grid-template-columns: 1fr;
+  }
+
+  .script-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .layout {

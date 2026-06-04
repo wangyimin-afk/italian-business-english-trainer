@@ -5,14 +5,20 @@ const analyzeBtn = document.querySelector("#analyzeBtn");
 const copyCleanedBtn = document.querySelector("#copyCleanedBtn");
 const exportBtn = document.querySelector("#exportBtn");
 const copyLibraryBtn = document.querySelector("#copyLibraryBtn");
+const copyVocabBtn = document.querySelector("#copyVocabBtn");
 const categoryTabs = document.querySelector("#categoryTabs");
 const sentenceLibrary = document.querySelector("#sentenceLibrary");
+const vocabGrid = document.querySelector("#vocabGrid");
+const scriptTabs = document.querySelector("#scriptTabs");
+const scriptGrid = document.querySelector("#scriptGrid");
+const accentGrid = document.querySelector("#accentGrid");
 const toast = document.querySelector("#toast");
 
 const state = {
   cleanedText: "",
   notes: "",
   activeCategory: "全部",
+  activeScript: "日语五十音",
 };
 
 const sentenceBank = [
@@ -147,6 +153,137 @@ const sentenceBank = [
   { category: "发音线索", en: "Do not translate every word; translate the business intention.", zh: "不要翻译每个词，要翻译业务意图。" },
   { category: "发音线索", en: "Numbers are often the safest anchor in a difficult accent.", zh: "在难懂口音里，数字通常是最可靠的锚点。" },
   { category: "发音线索", en: "If you miss the verb, use the context to ask a confirmation question.", zh: "如果没听清动词，就用上下文问确认句。" },
+];
+
+const vocabBank = [
+  { zh: "报价", scene: "价格", en: "quotation", it: "preventivo", hi: "quotation", ms: "sebut harga", ko: "견적", ja: "見積もり", fi: "tarjous", de: "Angebot" },
+  { zh: "单价", scene: "价格", en: "unit price", it: "prezzo unitario", hi: "unit price", ms: "harga seunit", ko: "단가", ja: "単価", fi: "yksikköhinta", de: "Stückpreis" },
+  { zh: "总成本", scene: "价格", en: "total cost", it: "costo totale", hi: "total cost", ms: "kos keseluruhan", ko: "총비용", ja: "総コスト", fi: "kokonaiskustannus", de: "Gesamtkosten" },
+  { zh: "折扣", scene: "价格", en: "discount", it: "sconto", hi: "discount", ms: "diskaun", ko: "할인", ja: "割引", fi: "alennus", de: "Rabatt" },
+  { zh: "付款条件", scene: "付款", en: "payment terms", it: "termini di pagamento", hi: "payment terms", ms: "terma pembayaran", ko: "결제 조건", ja: "支払い条件", fi: "maksuehdot", de: "Zahlungsbedingungen" },
+  { zh: "预付款", scene: "付款", en: "advance payment", it: "pagamento anticipato", hi: "advance payment", ms: "bayaran pendahuluan", ko: "선불금", ja: "前払い", fi: "ennakkomaksu", de: "Vorauszahlung" },
+  { zh: "尾款", scene: "付款", en: "balance payment", it: "saldo", hi: "balance payment", ms: "bayaran baki", ko: "잔금", ja: "残金", fi: "loppumaksu", de: "Restzahlung" },
+  { zh: "发票", scene: "付款", en: "invoice", it: "fattura", hi: "invoice", ms: "invois", ko: "송장", ja: "請求書", fi: "lasku", de: "Rechnung" },
+  { zh: "交期", scene: "交付", en: "lead time", it: "tempo di consegna", hi: "lead time", ms: "masa penghantaran", ko: "납기", ja: "リードタイム", fi: "toimitusaika", de: "Lieferzeit" },
+  { zh: "发货", scene: "交付", en: "shipment", it: "spedizione", hi: "shipment", ms: "penghantaran", ko: "선적", ja: "出荷", fi: "lähetys", de: "Versand" },
+  { zh: "延迟", scene: "交付", en: "delay", it: "ritardo", hi: "delay", ms: "kelewatan", ko: "지연", ja: "遅延", fi: "viive", de: "Verzögerung" },
+  { zh: "到货日期", scene: "交付", en: "arrival date", it: "data di arrivo", hi: "arrival date", ms: "tarikh ketibaan", ko: "도착일", ja: "到着日", fi: "saapumispäivä", de: "Ankunftsdatum" },
+  { zh: "样品", scene: "样品", en: "sample", it: "campione", hi: "sample", ms: "sampel", ko: "샘플", ja: "サンプル", fi: "näyte", de: "Muster" },
+  { zh: "样品确认", scene: "样品", en: "sample approval", it: "approvazione del campione", hi: "sample approval", ms: "kelulusan sampel", ko: "샘플 승인", ja: "サンプル承認", fi: "näytteen hyväksyntä", de: "Musterfreigabe" },
+  { zh: "规格", scene: "技术", en: "specification", it: "specifica", hi: "specification", ms: "spesifikasi", ko: "사양", ja: "仕様", fi: "erittely", de: "Spezifikation" },
+  { zh: "图纸", scene: "技术", en: "drawing", it: "disegno tecnico", hi: "drawing", ms: "lukisan teknikal", ko: "도면", ja: "図面", fi: "piirustus", de: "Zeichnung" },
+  { zh: "变更", scene: "项目", en: "change", it: "modifica", hi: "change", ms: "perubahan", ko: "변경", ja: "変更", fi: "muutos", de: "Änderung" },
+  { zh: "版本", scene: "项目", en: "version", it: "versione", hi: "version", ms: "versi", ko: "버전", ja: "バージョン", fi: "versio", de: "Version" },
+  { zh: "订单", scene: "订单", en: "purchase order", it: "ordine di acquisto", hi: "purchase order", ms: "pesanan pembelian", ko: "구매 주문", ja: "注文書", fi: "ostotilaus", de: "Bestellung" },
+  { zh: "订单确认", scene: "订单", en: "order confirmation", it: "conferma ordine", hi: "order confirmation", ms: "pengesahan pesanan", ko: "주문 확인", ja: "注文確認", fi: "tilausvahvistus", de: "Auftragsbestätigung" },
+  { zh: "最低起订量", scene: "订单", en: "minimum order quantity", it: "quantità minima d'ordine", hi: "MOQ", ms: "kuantiti pesanan minimum", ko: "최소 주문 수량", ja: "最小注文数量", fi: "vähimmäistilausmäärä", de: "Mindestbestellmenge" },
+  { zh: "预测", scene: "计划", en: "forecast", it: "previsione", hi: "forecast", ms: "ramalan", ko: "예측", ja: "予測", fi: "ennuste", de: "Prognose" },
+  { zh: "需求", scene: "计划", en: "demand", it: "domanda", hi: "demand", ms: "permintaan", ko: "수요", ja: "需要", fi: "kysyntä", de: "Nachfrage" },
+  { zh: "产能", scene: "计划", en: "capacity", it: "capacità", hi: "capacity", ms: "kapasiti", ko: "생산능력", ja: "生産能力", fi: "kapasiteetti", de: "Kapazität" },
+  { zh: "库存", scene: "计划", en: "stock", it: "scorta", hi: "stock", ms: "stok", ko: "재고", ja: "在庫", fi: "varasto", de: "Bestand" },
+  { zh: "质量问题", scene: "质量", en: "quality issue", it: "problema di qualità", hi: "quality issue", ms: "isu kualiti", ko: "품질 문제", ja: "品質問題", fi: "laatuongelma", de: "Qualitätsproblem" },
+  { zh: "检验", scene: "质量", en: "inspection", it: "ispezione", hi: "inspection", ms: "pemeriksaan", ko: "검사", ja: "検査", fi: "tarkastus", de: "Prüfung" },
+  { zh: "不良率", scene: "质量", en: "defect rate", it: "tasso di difetti", hi: "defect rate", ms: "kadar kecacatan", ko: "불량률", ja: "不良率", fi: "vikaprosentti", de: "Fehlerquote" },
+  { zh: "纠正措施", scene: "质量", en: "corrective action", it: "azione correttiva", hi: "corrective action", ms: "tindakan pembetulan", ko: "시정 조치", ja: "是正措置", fi: "korjaava toimenpide", de: "Korrekturmaßnahme" },
+  { zh: "包装", scene: "物流", en: "packaging", it: "imballaggio", hi: "packaging", ms: "pembungkusan", ko: "포장", ja: "梱包", fi: "pakkaus", de: "Verpackung" },
+  { zh: "标签", scene: "物流", en: "label", it: "etichetta", hi: "label", ms: "label", ko: "라벨", ja: "ラベル", fi: "etiketti", de: "Etikett" },
+  { zh: "海运", scene: "物流", en: "sea freight", it: "trasporto marittimo", hi: "sea freight", ms: "pengangkutan laut", ko: "해상 운송", ja: "海上輸送", fi: "merirahti", de: "Seefracht" },
+  { zh: "空运", scene: "物流", en: "air freight", it: "trasporto aereo", hi: "air freight", ms: "pengangkutan udara", ko: "항공 운송", ja: "航空輸送", fi: "lentorahti", de: "Luftfracht" },
+  { zh: "清关", scene: "物流", en: "customs clearance", it: "sdoganamento", hi: "customs clearance", ms: "pelepasan kastam", ko: "통관", ja: "通関", fi: "tulliselvitys", de: "Zollabfertigung" },
+  { zh: "风险", scene: "风险", en: "risk", it: "rischio", hi: "risk", ms: "risiko", ko: "위험", ja: "リスク", fi: "riski", de: "Risiko" },
+  { zh: "责任", scene: "风险", en: "responsibility", it: "responsabilità", hi: "responsibility", ms: "tanggungjawab", ko: "책임", ja: "責任", fi: "vastuu", de: "Verantwortung" },
+  { zh: "解决方案", scene: "问题", en: "solution", it: "soluzione", hi: "solution", ms: "penyelesaian", ko: "해결책", ja: "解決策", fi: "ratkaisu", de: "Lösung" },
+  { zh: "根本原因", scene: "问题", en: "root cause", it: "causa principale", hi: "root cause", ms: "punca utama", ko: "근본 원인", ja: "根本原因", fi: "juurisyy", de: "Grundursache" },
+  { zh: "会议纪要", scene: "会议", en: "meeting minutes", it: "verbale della riunione", hi: "meeting minutes", ms: "minit mesyuarat", ko: "회의록", ja: "議事録", fi: "kokousmuistio", de: "Besprechungsprotokoll" },
+  { zh: "行动项", scene: "会议", en: "action item", it: "azione da fare", hi: "action item", ms: "tindakan susulan", ko: "조치 항목", ja: "アクション項目", fi: "toimenpide", de: "Aktionspunkt" },
+  { zh: "负责人", scene: "会议", en: "owner", it: "responsabile", hi: "owner", ms: "pemilik tindakan", ko: "담당자", ja: "担当者", fi: "vastuuhenkilö", de: "Verantwortlicher" },
+  { zh: "截止日期", scene: "会议", en: "deadline", it: "scadenza", hi: "deadline", ms: "tarikh akhir", ko: "마감일", ja: "締切", fi: "määräaika", de: "Frist" },
+  { zh: "客户拜访", scene: "客户", en: "customer visit", it: "visita al cliente", hi: "customer visit", ms: "lawatan pelanggan", ko: "고객 방문", ja: "顧客訪問", fi: "asiakaskäynti", de: "Kundenbesuch" },
+  { zh: "跟进", scene: "客户", en: "follow-up", it: "seguito", hi: "follow-up", ms: "susulan", ko: "후속 조치", ja: "フォローアップ", fi: "jatkotoimi", de: "Nachverfolgung" },
+  { zh: "确认", scene: "沟通", en: "confirmation", it: "conferma", hi: "confirmation", ms: "pengesahan", ko: "확인", ja: "確認", fi: "vahvistus", de: "Bestätigung" },
+  { zh: "澄清", scene: "沟通", en: "clarification", it: "chiarimento", hi: "clarification", ms: "penjelasan", ko: "명확화", ja: "明確化", fi: "selvennys", de: "Klärung" },
+  { zh: "优先级", scene: "沟通", en: "priority", it: "priorità", hi: "priority", ms: "keutamaan", ko: "우선순위", ja: "優先順位", fi: "prioriteetti", de: "Priorität" },
+  { zh: "可行性", scene: "项目", en: "feasibility", it: "fattibilità", hi: "feasibility", ms: "kebolehlaksanaan", ko: "실현 가능성", ja: "実現可能性", fi: "toteutettavuus", de: "Machbarkeit" },
+  { zh: "长期方案", scene: "项目", en: "long-term solution", it: "soluzione a lungo termine", hi: "long-term solution", ms: "penyelesaian jangka panjang", ko: "장기 해결책", ja: "長期的な解決策", fi: "pitkän aikavälin ratkaisu", de: "langfristige Lösung" },
+  { zh: "临时方案", scene: "项目", en: "temporary solution", it: "soluzione temporanea", hi: "temporary solution", ms: "penyelesaian sementara", ko: "임시 해결책", ja: "暫定対応", fi: "väliaikainen ratkaisu", de: "Übergangslösung" },
+  { zh: "内部确认", scene: "沟通", en: "internal check", it: "verifica interna", hi: "internal check", ms: "semakan dalaman", ko: "내부 확인", ja: "社内確認", fi: "sisäinen tarkistus", de: "interne Prüfung" },
+];
+
+const languageLabels = [
+  ["en", "English", "en-US"],
+  ["it", "Italiano", "it-IT"],
+  ["hi", "Indian English", "en-IN"],
+  ["ms", "Bahasa Melayu", "ms-MY"],
+  ["ko", "한국어", "ko-KR"],
+  ["ja", "日本語", "ja-JP"],
+  ["fi", "Suomi", "fi-FI"],
+  ["de", "Deutsch", "de-DE"],
+];
+
+const scriptBanks = {
+  "日语五十音": [
+    ["あ", "a"], ["い", "i"], ["う", "u"], ["え", "e"], ["お", "o"],
+    ["か", "ka"], ["き", "ki"], ["く", "ku"], ["け", "ke"], ["こ", "ko"],
+    ["さ", "sa"], ["し", "shi"], ["す", "su"], ["せ", "se"], ["そ", "so"],
+    ["た", "ta"], ["ち", "chi"], ["つ", "tsu"], ["て", "te"], ["と", "to"],
+    ["な", "na"], ["に", "ni"], ["ぬ", "nu"], ["ね", "ne"], ["の", "no"],
+    ["ま", "ma"], ["み", "mi"], ["む", "mu"], ["め", "me"], ["も", "mo"],
+    ["ら", "ra"], ["り", "ri"], ["る", "ru"], ["れ", "re"], ["ろ", "ro"],
+  ].map(([text, hint]) => ({ text, hint, lang: "ja-JP" })),
+  "韩语基础": [
+    ["가", "ga"], ["나", "na"], ["다", "da"], ["라", "ra"], ["마", "ma"],
+    ["바", "ba"], ["사", "sa"], ["아", "a"], ["자", "ja"], ["차", "cha"],
+    ["카", "ka"], ["타", "ta"], ["파", "pa"], ["하", "ha"], ["고", "go"],
+    ["구", "gu"], ["기", "gi"], ["게", "ge"], ["거", "geo"], ["겨", "gyeo"],
+  ].map(([text, hint]) => ({ text, hint, lang: "ko-KR" })),
+  "意大利语": [
+    ["a", "open a"], ["e", "e"], ["i", "i"], ["o", "o"], ["u", "u"],
+    ["ciao", "hello"], ["grazie", "thanks"], ["prego", "please"], ["scusa", "sorry"], ["conferma", "confirmation"],
+    ["prezzo", "price"], ["tempo", "time"], ["rischio", "risk"], ["qualità", "quality"], ["ordine", "order"],
+  ].map(([text, hint]) => ({ text, hint, lang: "it-IT" })),
+  "芬兰语": [
+    ["a", "a"], ["ä", "front a"], ["ö", "front o"], ["y", "rounded y"], ["kiitos", "thanks"],
+    ["päivä", "day"], ["hinta", "price"], ["aika", "time"], ["riski", "risk"], ["tilaus", "order"],
+    ["laatu", "quality"], ["toimitus", "delivery"], ["lasku", "invoice"], ["vastuu", "responsibility"], ["ratkaisu", "solution"],
+  ].map(([text, hint]) => ({ text, hint, lang: "fi-FI" })),
+  "德语": [
+    ["a", "a"], ["ä", "ae"], ["ö", "oe"], ["ü", "ue"], ["ß", "ss"],
+    ["Preis", "price"], ["Termin", "date"], ["Risiko", "risk"], ["Qualität", "quality"], ["Bestellung", "order"],
+    ["Rechnung", "invoice"], ["Lieferung", "delivery"], ["Klärung", "clarification"], ["Lösung", "solution"], ["Danke", "thanks"],
+  ].map(([text, hint]) => ({ text, hint, lang: "de-DE" })),
+};
+
+const accentProfiles = [
+  {
+    title: "意大利人英语",
+    points: ["常用 to me / actually / more or less 开头。", "句子可能很长，中间插入背景和个人判断。", "重点通常在 the idea is / because why 后面。"],
+    sample: "To me, the idea is to keep flexibility, because why, the situation can change very fast.",
+  },
+  {
+    title: "印度裔英语",
+    points: ["语速可能快，重音和英美英语不同。", "常用 please do the needful / kindly confirm / revert 这类商务表达。", "数字和时间要主动复述确认。"],
+    sample: "Kindly confirm the revised timeline, and we will revert with the updated commercial proposal.",
+  },
+  {
+    title: "马来西亚/东南亚英语",
+    points: ["表达可能更短、更直接，语法会比较实用化。", "常用 can / cannot / already / later 来表达状态。", "听的时候重点抓动作、时间和是否可行。"],
+    sample: "Can proceed first, but later we need your confirmation on price and delivery.",
+  },
+  {
+    title: "韩国人英语",
+    points: ["比较重视礼貌、层级和确认。", "可能间接表达不同意，例如 we need to review internally。", "会议后邮件确认很重要。"],
+    sample: "We need to check internally first, and then we can give you the final confirmation.",
+  },
+  {
+    title: "德国人英语",
+    points: ["结构清楚，偏事实、流程、责任和规则。", "表达可能直接，但通常不是个人情绪。", "适合用数据、日期、责任人来沟通。"],
+    sample: "The requirement is clear, but we need a fixed deadline and one responsible owner.",
+  },
+  {
+    title: "芬兰人英语",
+    points: ["通常简洁、克制，不会过度寒暄。", "沉默不一定是否定，可能是在思考。", "书面确认和事实依据很重要。"],
+    sample: "Let us check the facts first. After that, we can decide the next step.",
+  },
 ];
 
 const domainTerms = [
@@ -383,6 +520,109 @@ function formatLibraryText() {
     .join("\n\n");
 }
 
+function speak(text, lang = "en-US") {
+  if (!("speechSynthesis" in window)) {
+    showToast("当前浏览器不支持朗读。");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = 0.86;
+  window.speechSynthesis.speak(utterance);
+}
+
+function renderVocab() {
+  if (!vocabGrid) return;
+  vocabGrid.innerHTML = "";
+  vocabBank.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "vocab-card";
+
+    const head = document.createElement("div");
+    head.className = "vocab-head";
+    head.innerHTML = `<strong>${item.zh}</strong><span>${item.scene}</span>`;
+
+    const rows = document.createElement("div");
+    rows.className = "language-row";
+    languageLabels.forEach(([key, label, lang]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "speak-cell";
+      button.innerHTML = `<span>${label}</span><strong>${item[key]}</strong>`;
+      button.addEventListener("click", () => speak(item[key], lang));
+      rows.appendChild(button);
+    });
+
+    card.append(head, rows);
+    vocabGrid.appendChild(card);
+  });
+}
+
+function formatVocabText() {
+  return vocabBank
+    .map((item, index) => {
+      const lines = languageLabels.map(([key, label]) => `${label}: ${item[key]}`).join("\n");
+      return `${index + 1}. ${item.zh} [${item.scene}]\n${lines}`;
+    })
+    .join("\n\n");
+}
+
+function renderScriptTabs() {
+  if (!scriptTabs) return;
+  scriptTabs.innerHTML = "";
+  Object.keys(scriptBanks).forEach((name) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `tab-btn${name === state.activeScript ? " active" : ""}`;
+    button.textContent = name;
+    button.addEventListener("click", () => {
+      state.activeScript = name;
+      renderScriptTabs();
+      renderScriptGrid();
+    });
+    scriptTabs.appendChild(button);
+  });
+}
+
+function renderScriptGrid() {
+  if (!scriptGrid) return;
+  scriptGrid.innerHTML = "";
+  scriptBanks[state.activeScript].forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "script-cell";
+    button.innerHTML = `<span>${item.hint}</span><strong>${item.text}</strong>`;
+    button.addEventListener("click", () => speak(item.text, item.lang));
+    scriptGrid.appendChild(button);
+  });
+}
+
+function renderAccentProfiles() {
+  if (!accentGrid) return;
+  accentGrid.innerHTML = "";
+  accentProfiles.forEach((profile) => {
+    const card = document.createElement("article");
+    card.className = "accent-card";
+    const list = profile.points.map((point) => `<li>${point}</li>`).join("");
+    card.innerHTML = `
+      <h3>${profile.title}</h3>
+      <ul>${list}</ul>
+      <div class="sample-line">
+        <strong>Sample</strong>
+        <p>${profile.sample}</p>
+      </div>
+    `;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "ghost-btn";
+    button.textContent = "朗读示例";
+    button.addEventListener("click", () => speak(profile.sample, "en-US"));
+    card.querySelector(".sample-line").appendChild(button);
+    accentGrid.appendChild(card);
+  });
+}
+
 function makeNotes(cleaned, storyline, terms, numbers, phrases, questions) {
   return [
     "# 意大利商务英语听力训练笔记",
@@ -475,6 +715,11 @@ analyzeBtn?.addEventListener("click", analyze);
 copyCleanedBtn?.addEventListener("click", () => copyText(state.cleanedText, "先生成清洗文本。"));
 exportBtn?.addEventListener("click", exportNotes);
 copyLibraryBtn?.addEventListener("click", () => copyText(formatLibraryText(), "句库还没有加载。"));
+copyVocabBtn?.addEventListener("click", () => copyText(formatVocabText(), "词表还没有加载。"));
 
 renderCategoryTabs();
 renderSentenceLibrary();
+renderVocab();
+renderScriptTabs();
+renderScriptGrid();
+renderAccentProfiles();
